@@ -45,7 +45,7 @@
                     rounded-full border-0 shadow-lg shadow-teal-500/50 bg-teal-600
                     transition-colors
                     hover:bg-teal-500
-                    outline-none focus:ring-offset-2 focus-ring-2 focus:ring-inset focus:ring-white focus-bg-teal-700 focus:ring-offset-teal-700
+                    outline-hidden focus:ring-offset-2 focus-ring-2 focus:ring-inset focus:ring-white focus-bg-teal-700 focus:ring-offset-teal-700
                 "
             >
                 <x-heroicon-o-adjustments-horizontal class="w-8 h-8" />

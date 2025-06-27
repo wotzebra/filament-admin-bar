@@ -1,8 +1,8 @@
 <div class="rounded-2xl border border-gray-300 bg-white overflow-auto">
     <table class="w-full">
         <tr class="bg-gray-100">
-            <th class="py-1.5 px-3 text-left font-medium text-gray-600 min-w-[26rem]">Name</th>
-            <th class="py-1.5 px-3 text-left font-medium text-gray-600 min-w-[26rem]">Content</th>
+            <th class="py-1.5 px-3 text-left font-medium text-gray-600 min-w-104">Name</th>
+            <th class="py-1.5 px-3 text-left font-medium text-gray-600 min-w-104">Content</th>
         </tr>
         @foreach ($data as $key => $value)
             <tr class="border-t border-gray-300">
