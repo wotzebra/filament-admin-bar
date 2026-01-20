@@ -38,8 +38,8 @@
             <div class="rounded-2xl border border-gray-300 bg-white overflow-auto">
                 <table class="w-full">
                     <tr class="bg-gray-100">
-                        <th class="py-1.5 px-3 text-left font-medium text-gray-600 min-w-[26rem]">Name</th>
-                        <th class="py-1.5 px-3 text-left font-medium text-gray-600 min-w-[26rem]">Translation</th>
+                        <th class="py-1.5 px-3 text-left font-medium text-gray-600 min-w-104">Name</th>
+                        <th class="py-1.5 px-3 text-left font-medium text-gray-600 min-w-104">Translation</th>
                     </tr>
                     @foreach ($strings as $string)
                         <tr class="border-t border-gray-300">
@@ -54,7 +54,7 @@
                                             filament-link filament-tables-link-action
                                             inline-flex items-center justify-center gap-1
                                             font-medium text-teal-600
-                                            outline-none no-underline focus:underline
+                                            outline-hidden no-underline focus:underline
                                             hover:underline hover:text-teal-500
                                         "
                                         href="/admin/translatable-strings/{{ $string->id }}/edit?locale=-{{ app()->getLocale() }}-tab"
@@ -79,11 +79,11 @@
             <button
                 class="
                     inline-flex items-center justify-center gap-1
-                    py-1 px-4 min-h-[2.25rem] mt-4
+                    py-1 px-4 min-h-9 mt-4
                     font-medium text-white
                     rounded-xl border shadow border-transparent bg-teal-600
                     transition-colors
-                    outline-none focus:ring-offset-2 focus:ring-2 focus:ring-inset focus:ring-white
+                    outline-hidden focus:ring-offset-2 focus:ring-2 focus:ring-inset focus:ring-white
                     focus:bg-teal-700 focus:ring-offset-teal-700
                     hover:bg-teal-500
                 "

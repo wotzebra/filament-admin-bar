@@ -1,5 +1,5 @@
 <div class="filament-admin-bar">
-    <link rel="stylesheet" href="{{ asset('css/codedor/filament-admin-bar/filament-admin-bar.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/wotz/filament-admin-bar/filament-admin-bar.css') }}">
 
     <div
         class="fixed right-0 bottom-0 left-0 max-h-screen"
@@ -45,7 +45,7 @@
                     rounded-full border-0 shadow-lg shadow-teal-500/50 bg-teal-600
                     transition-colors
                     hover:bg-teal-500
-                    outline-none focus:ring-offset-2 focus-ring-2 focus:ring-inset focus:ring-white focus-bg-teal-700 focus:ring-offset-teal-700
+                    outline-hidden focus:ring-offset-2 focus-ring-2 focus:ring-inset focus:ring-white focus-bg-teal-700 focus:ring-offset-teal-700
                 "
             >
                 <x-heroicon-o-adjustments-horizontal class="w-8 h-8" />
