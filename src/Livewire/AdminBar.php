@@ -2,9 +2,9 @@
 
 namespace Wotz\FilamentAdminBar\Livewire;
 
-use Wotz\FilamentAdminBar\Tabs\Tab;
 use Filament\Facades\Filament;
 use Livewire\Component;
+use Wotz\FilamentAdminBar\Tabs\Tab;
 
 class AdminBar extends Component
 {

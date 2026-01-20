@@ -2,9 +2,9 @@
 
 namespace Wotz\FilamentAdminBar\Livewire;
 
-use Wotz\TranslatableStrings\Models\TranslatableString;
 use Illuminate\Support\Collection;
 use Livewire\Component;
+use Wotz\TranslatableStrings\Models\TranslatableString;
 
 class TranslatableStringsTab extends Component
 {

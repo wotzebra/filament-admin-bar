@@ -2,10 +2,10 @@
 
 namespace Wotz\FilamentAdminBar\Tests;
 
-use Wotz\FilamentAdminBar\Providers\FilamentAdminBarServiceProvider;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Livewire\LivewireServiceProvider;
 use Orchestra\Testbench\TestCase as Orchestra;
+use Wotz\FilamentAdminBar\Providers\FilamentAdminBarServiceProvider;
 
 class TestCase extends Orchestra
 {

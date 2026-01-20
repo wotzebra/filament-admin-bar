@@ -2,8 +2,8 @@
 
 namespace Wotz\FilamentAdminBar\Tabs;
 
-use Wotz\Seo\Facades\SeoBuilder;
 use Illuminate\View\View;
+use Wotz\Seo\Facades\SeoBuilder;
 
 class SeoTab extends Tab
 {
