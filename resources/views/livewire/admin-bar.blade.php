@@ -1,5 +1,5 @@
 <div class="filament-admin-bar">
-    <link rel="stylesheet" href="{{ asset('css/codedor/filament-admin-bar/filament-admin-bar.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/wotz/filament-admin-bar/filament-admin-bar.css') }}">
 
     <div
         class="fixed right-0 bottom-0 left-0 max-h-screen"

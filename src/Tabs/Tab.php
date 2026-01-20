@@ -1,6 +1,6 @@
 <?php
 
-namespace Codedor\FilamentAdminBar\Tabs;
+namespace Wotz\FilamentAdminBar\Tabs;
 
 use Illuminate\View\View;
 

@@ -1,10 +1,10 @@
 <?php
 
-namespace Codedor\FilamentAdminBar\Livewire;
+namespace Wotz\FilamentAdminBar\Livewire;
 
-use Codedor\TranslatableStrings\Models\TranslatableString;
 use Illuminate\Support\Collection;
 use Livewire\Component;
+use Wotz\TranslatableStrings\Models\TranslatableString;
 
 class TranslatableStringsTab extends Component
 {

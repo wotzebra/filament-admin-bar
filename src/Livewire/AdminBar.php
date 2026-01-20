@@ -1,10 +1,10 @@
 <?php
 
-namespace Codedor\FilamentAdminBar\Livewire;
+namespace Wotz\FilamentAdminBar\Livewire;
 
-use Codedor\FilamentAdminBar\Tabs\Tab;
 use Filament\Facades\Filament;
 use Livewire\Component;
+use Wotz\FilamentAdminBar\Tabs\Tab;
 
 class AdminBar extends Component
 {

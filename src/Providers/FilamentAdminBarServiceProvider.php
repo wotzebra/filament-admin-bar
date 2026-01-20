@@ -1,13 +1,13 @@
 <?php
 
-namespace Codedor\FilamentAdminBar\Providers;
+namespace Wotz\FilamentAdminBar\Providers;
 
-use Codedor\FilamentAdminBar\Livewire as Components;
 use Filament\Support\Assets\Css;
 use Filament\Support\Facades\FilamentAsset;
 use Livewire\Livewire;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
+use Wotz\FilamentAdminBar\Livewire as Components;
 
 class FilamentAdminBarServiceProvider extends PackageServiceProvider
 {
@@ -27,6 +27,6 @@ class FilamentAdminBarServiceProvider extends PackageServiceProvider
 
         FilamentAsset::register([
             Css::make('filament-admin-bar', __DIR__ . '/../../resources/dist/assets/filament-admin-bar.css'),
-        ], 'codedor/filament-admin-bar');
+        ], 'wotz/filament-admin-bar');
     }
 }
