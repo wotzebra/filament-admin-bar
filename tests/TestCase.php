@@ -1,8 +1,8 @@
 <?php
 
-namespace Codedor\FilamentAdminBar\Tests;
+namespace Wotz\FilamentAdminBar\Tests;
 
-use Codedor\FilamentAdminBar\Providers\FilamentAdminBarServiceProvider;
+use Wotz\FilamentAdminBar\Providers\FilamentAdminBarServiceProvider;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Livewire\LivewireServiceProvider;
 use Orchestra\Testbench\TestCase as Orchestra;
@@ -14,7 +14,7 @@ class TestCase extends Orchestra
         parent::setUp();
 
         Factory::guessFactoryNamesUsing(
-            fn (string $modelName) => 'Codedor\\FilamentAdminBar\\Database\\Factories\\' . class_basename($modelName) . 'Factory'
+            fn (string $modelName) => 'Wotz\\FilamentAdminBar\\Database\\Factories\\' . class_basename($modelName) . 'Factory'
         );
     }
 

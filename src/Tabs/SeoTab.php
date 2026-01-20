@@ -1,8 +1,8 @@
 <?php
 
-namespace Codedor\FilamentAdminBar\Tabs;
+namespace Wotz\FilamentAdminBar\Tabs;
 
-use Codedor\Seo\Facades\SeoBuilder;
+use Wotz\Seo\Facades\SeoBuilder;
 use Illuminate\View\View;
 
 class SeoTab extends Tab

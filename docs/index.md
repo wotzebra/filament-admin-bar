@@ -11,7 +11,7 @@ This package will add an admin bar to the frontend, only visible for logged in F
 You can install the package via composer:
 
 ```bash
-composer require codedor/filament-admin-bar
+composer require wotz/filament-admin-bar
 ```
 
 DO NOT forget to publish the CSS files, or the bar will not be visible:
@@ -31,8 +31,8 @@ This is the contents of the published config file:
 ```php
 return [
     'tabs' => [
-        Codedor\FilamentAdminBar\Tabs\SeoTab::class,
-        Codedor\FilamentAdminBar\Tabs\TranslatableStringsTab::class,
+        Wotz\FilamentAdminBar\Tabs\SeoTab::class,
+        Wotz\FilamentAdminBar\Tabs\TranslatableStringsTab::class,
     ],
     'translatable-strings-tab' => [
         'excluded' => [
@@ -58,7 +58,7 @@ return [
     // ...
     'providers' => ServiceProvider::defaultProviders()->merge([
         // ...
-        Codedor\FilamentAdminBar\TranslationLoader::class,
+        Wotz\FilamentAdminBar\TranslationLoader::class,
         // ...
     ])->toArray(),
     // ...

@@ -1,5 +1,5 @@
 parameters:
     ignoreErrors:
         -
-            message: "#^Call to static method contents\\(\\) on an unknown class Codedor\\\\Seo\\\\Facades\\\\SeoBuilder\\.#"
+            message: "#^Call to static method contents\\(\\) on an unknown class Wotz\\\\Seo\\\\Facades\\\\SeoBuilder\\.#"
             path: src/Tabs/SeoTab.php

@@ -1,6 +1,6 @@
 <?php
 
-namespace Codedor\FilamentAdminBar;
+namespace Wotz\FilamentAdminBar;
 
 use Filament\Facades\Filament;
 use Illuminate\Support\Str;
