@@ -42,7 +42,7 @@
                         <th class="py-1.5 px-3 text-left font-medium text-gray-600 min-w-[26rem]">Translation</th>
                     </tr>
                     @foreach ($strings as $string)
-                        <tr class="border-t border-gray-300">
+                        <tr class="border-t border-gray-300" wire:key="{{ $string->id }}_string_row">
                             <td class="py-1.5 px-3">
                                 {{ $string->key }}
                             </td>
