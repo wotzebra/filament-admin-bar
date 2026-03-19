@@ -16,6 +16,6 @@
 @layer base {
     .filament-admin-bar input {
         box-shadow: none !important;
-        @apply block py-1.5 px-3.5 rounded-xl border-gray-300 outline-hidden transition duration-75 focus:ring-1 focus:ring-inset focus:border-teal-500 focus:ring-teal-500 disabled:opacity-70;
+        @apply block py-1.5 px-3.5 rounded-xl border border-gray-300 outline-hidden transition duration-75 focus:ring-1 focus:ring-inset focus:border-teal-500 focus:ring-teal-500 disabled:opacity-70;
     }
 }
