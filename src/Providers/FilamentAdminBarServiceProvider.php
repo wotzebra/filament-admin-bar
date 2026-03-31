@@ -8,6 +8,7 @@ use Livewire\Livewire;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 use Wotz\FilamentAdminBar\Livewire as Components;
+use Wotz\TranslatableStrings\Models\TranslatableString;
 
 class FilamentAdminBarServiceProvider extends PackageServiceProvider
 {
@@ -23,7 +24,10 @@ class FilamentAdminBarServiceProvider extends PackageServiceProvider
     public function bootingPackage()
     {
         Livewire::component('admin-bar', Components\AdminBar::class);
-        Livewire::component('translatable-strings-tab', Components\TranslatableStringsTab::class);
+
+        if (class_exists(TranslatableString::class)) {
+            Livewire::component('translatable-strings-tab', Components\TranslatableStringsTab::class);
+        }
 
         FilamentAsset::register([
             Css::make('filament-admin-bar', __DIR__ . '/../../resources/dist/assets/filament-admin-bar.css'),

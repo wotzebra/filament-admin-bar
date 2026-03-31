@@ -1,9 +1,12 @@
 <?php
 
+use Wotz\FilamentAdminBar\Tabs\SeoTab;
+use Wotz\FilamentAdminBar\Tabs\TranslatableStringsTab;
+
 return [
     'tabs' => [
-        Wotz\FilamentAdminBar\Tabs\SeoTab::class,
-        Wotz\FilamentAdminBar\Tabs\TranslatableStringsTab::class,
+        SeoTab::class,
+        TranslatableStringsTab::class,
     ],
     'translatable-strings-tab' => [
         'excluded' => [

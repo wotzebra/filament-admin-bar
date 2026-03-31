@@ -3,3 +3,6 @@ parameters:
         -
             message: "#^Call to static method contents\\(\\) on an unknown class Wotz\\\\Seo\\\\Facades\\\\SeoBuilder\\.#"
             path: src/Tabs/SeoTab.php
+        -
+            message: "#^Call to static method query\\(\\) on an unknown class Wotz\\\\TranslatableStrings\\\\Models\\\\TranslatableString\\.#"
+            path: src/Livewire/TranslatableStringsTab.php
