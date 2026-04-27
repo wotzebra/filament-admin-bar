@@ -5,6 +5,30 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## v1.4.2 - 2026-04-27
+
+### What's Changed
+
+* Type-hint `changeTab` parameter as `string` to prevent a TypeError when `$current` receives a non-string value from a malformed Livewire payload
+
+## v1.4.1 - 2026-02-25
+
+### What's Changed
+
+* Add wire:key on translatable string row, so search and saving works properly by @jyrkidn in https://github.com/codedor/filament-admin-bar/pull/29
+
+**Full Changelog**: https://github.com/codedor/filament-admin-bar/compare/v1.4.0...v1.4.1
+
+## v1.4.0 - 2025-02-28
+
+### What's Changed
+
+* Upgrade to L12 by @jyrkidn in https://github.com/codedor/filament-admin-bar/pull/19
+* Bump aglipanci/laravel-pint-action from 2.4 to 2.5 by @dependabot
+* Bump dependabot/fetch-metadata from 2.2.0 to 2.3.0 by @dependabot
+
+**Full Changelog**: https://github.com/codedor/filament-admin-bar/compare/v1.3.0...v1.4.0
+
 ## v1.3.0 - 2024-10-04
 
 ### What's Changed
@@ -74,5 +98,3 @@ https://github.com/codedor/filament-admin-bar/commit/9ea68328d94c5be364f70473ae3
 #### Fixed
 
 - Fixed link-picker not working properly
-
-## [Unreleased]
