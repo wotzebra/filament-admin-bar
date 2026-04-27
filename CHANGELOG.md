@@ -5,6 +5,33 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## v2.1.1 - 2026-04-27
+
+### What's Changed
+
+* Type-hint `changeTab` parameter as `string` to prevent a TypeError when `$current` receives a non-string value from a malformed Livewire payload
+
+**Full Changelog**: https://github.com/wotzebra/filament-admin-bar/compare/v2.1.0...v2.1.1
+
+## v2.1.0 - 2026-04-16
+
+### What's Changed
+
+* Bump dependabot/fetch-metadata from 2.5.0 to 3.0.0 by @dependabot[bot] in https://github.com/wotzebra/filament-admin-bar/pull/35
+* Bump ramsey/composer-install from 3 to 4 by @dependabot[bot] in https://github.com/wotzebra/filament-admin-bar/pull/31
+* Add PHP 8.5 / Laravel 13 support by @jyrkidn in https://github.com/wotzebra/filament-admin-bar/pull/33
+* Fix missing borders on input fields since Tailwind v4 upgrade by @jyrkidn in https://github.com/wotzebra/filament-admin-bar/pull/34
+
+**Full Changelog**: https://github.com/wotzebra/filament-admin-bar/compare/v2.0.1...v2.1.0
+
+## v2.0.1 - 2026-02-25
+
+### What's Changed
+
+* Add wire:key on translatable string row, so search and saving works properly by @jyrkidn in https://github.com/wotzebra/filament-admin-bar/pull/30
+
+**Full Changelog**: https://github.com/wotzebra/filament-admin-bar/compare/v2.0.0...v2.0.1
+
 ## v2.0.0 - 2026-01-20
 
 ### What's Changed

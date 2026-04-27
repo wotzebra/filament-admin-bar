@@ -39,7 +39,7 @@ class AdminBar extends Component
         ]);
     }
 
-    public function changeTab($tab)
+    public function changeTab(string $tab): void
     {
         $this->current = $tab;
         session(['filament-admin-bar.current' => $this->current]);
