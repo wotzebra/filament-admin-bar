@@ -17,18 +17,505 @@
 
 @config '../../tailwind.config.js';
 
-@layer utilities {
-  .filament-admin-bar {
-    position: relative;
-    z-index: 9999;
-    font-size: 1.2rem;
-    font-family: Arial, Helvetica, sans-serif;
+/*
+ * Colour is plain custom properties rather than Tailwind colour utilities,
+ * because every value here derives from the Brigada theme's own tokens and a
+ * utility class cannot follow a palette the visitor chose in the CMS. Layout
+ * stays Tailwind.
+ *
+ * Everything is scoped to `.filament-admin-bar`, so a bar dropped onto any
+ * host site paints itself and nothing else.
+ */
+
+/* ---------- palette ---------------------------------------------------- */
+
+/*
+ * The derivation has to sit on the element that carries the `brio-*` class: a
+ * custom property resolves where it is declared, so splitting the two would
+ * leave `--s-dark` unresolved on the element that needs it.
+ */
+.filament-admin-bar.brio-01 { --s-dark: color-mix(in oklab, #511259 82%, #181614); --s-text: color-mix(in oklab, #511259 22%, #181614); --s-accent: #a93bbe; --s-accent-2: #ad002a; }
+.filament-admin-bar.brio-02 { --s-dark: color-mix(in oklab, #ad002a 72%, #181614); --s-text: color-mix(in oklab, #ad002a 18%, #181614); --s-accent: #c73e9e; --s-accent-2: #ff70a9; }
+.filament-admin-bar.brio-03 { --s-dark: color-mix(in oklab, #8a6a00 62%, #181614); --s-text: color-mix(in oklab, #8a6a00 16%, #181614); --s-accent: #c78a1e; --s-accent-2: #ff70a9; }
+.filament-admin-bar.brio-04 { --s-dark: color-mix(in oklab, #2fc699 58%, #181614); --s-text: color-mix(in oklab, #2fc699 15%, #181614); --s-accent: color-mix(in oklab, #2fc699 62%, #181614); --s-accent-2: #96d56a; }
+.filament-admin-bar.brio-05 { --s-dark: color-mix(in oklab, #4a2bd9 74%, #181614); --s-text: color-mix(in oklab, #4a2bd9 18%, #181614); --s-accent: #4a2bd9; --s-accent-2: #36d4b4; }
+.filament-admin-bar.brio-06 { --s-dark: color-mix(in oklab, #511259 84%, #181614); --s-text: color-mix(in oklab, #3a174f 20%, #181614); --s-accent: #d1541f; --s-accent-2: #c73e9e; }
+
+.filament-admin-bar {
+  /* Copied from the theme so the bar reads as part of the CMS. */
+  --paper: #fdfbf7;
+  --ground: color-mix(in oklab, var(--s-dark) 6%, var(--paper));
+  --surface: #fff;
+  --ink: var(--s-text);
+  --muted: color-mix(in oklab, var(--ink) 58%, transparent);
+  --faint: color-mix(in oklab, var(--ink) 40%, transparent);
+  --line: color-mix(in oklab, var(--ink) 10%, transparent);
+  --line-soft: color-mix(in oklab, var(--ink) 6%, transparent);
+  --fill: color-mix(in oklab, var(--ink) 4%, transparent);
+  --accent: var(--s-accent);
+  --accent-soft: color-mix(in oklab, var(--accent) 11%, #fff);
+
+  --hue-success: #2fc699;
+  --hue-info: #4d7bff;
+  --hue-warning: #f2a33c;
+  --hue-danger: #d2453d;
+
+  --r-sm: 0.5rem;
+  --r-md: 0.75rem;
+  --r-lg: 1rem;
+  --r-pill: 999px;
+
+  --shadow-card: 0 1px 2px color-mix(in oklab, var(--ink) 5%, transparent), 0 2px 10px color-mix(in oklab, var(--ink) 4%, transparent);
+  --shadow-pop: 0 4px 12px color-mix(in oklab, var(--ink) 8%, transparent), 0 12px 32px color-mix(in oklab, var(--ink) 8%, transparent);
+  --ease: cubic-bezier(0.16, 1, 0.3, 1);
+
+  --font: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  --mono: ui-monospace, 'SF Mono', Menlo, monospace;
+
+  /* Overridable by the host site when a widget sits in the same corner. */
+  --ab-inset-block-end: 20px;
+  --ab-inset-inline-start: 20px;
+
+  font-family: var(--font);
+  color: var(--ink);
+
+  /*
+   * Zendesk's launcher renders around z-index 999999, so bidding the number up
+   * is a race nobody wins. The root goes in the browser's top layer instead,
+   * which sits above every z-index there is; the number below is only the
+   * fallback for where the top layer is unavailable.
+   */
+  position: fixed;
+  inset: auto 0 0 0;
+  z-index: 2147483000;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  width: 100%;
+  max-width: 100%;
+  max-height: none;
+  overflow: visible;
+}
+
+.filament-admin-bar:popover-open {
+  display: block;
+}
+
+/* ---------- closed state: the edge tab --------------------------------- */
+
+.filament-admin-bar [data-admin-bar-trigger] {
+  position: fixed;
+  bottom: 0;
+  left: var(--ab-inset-inline-start);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px 10px;
+  border: 0;
+  border-radius: var(--r-md) var(--r-md) 0 0;
+  background: var(--s-dark);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  box-shadow: 0 -6px 18px color-mix(in oklab, var(--s-dark) 22%, transparent);
+  transition: padding-bottom 200ms var(--ease);
+  cursor: pointer;
+}
+
+.filament-admin-bar[data-corner='bottom-right'] [data-admin-bar-trigger] {
+  left: auto;
+  right: var(--ab-inset-inline-start);
+}
+
+.filament-admin-bar [data-admin-bar-trigger]:hover {
+  /* Nudges up out of the edge. */
+  padding-bottom: 14px;
+}
+
+/* ---------- open state: the sheet --------------------------------------- */
+
+.filament-admin-bar [data-admin-bar] {
+  background: var(--ground);
+  color: var(--ink);
+  border-top: 1px solid var(--line-soft);
+  border-radius: var(--r-lg) var(--r-lg) 0 0;
+  box-shadow: var(--shadow-pop);
+  /*
+   * Deliberately not `overflow: hidden`: the radius already clips the sheet's
+   * own background, and clipping here would cut off any popover opening upward
+   * out of the sheet.
+   */
+}
+
+.filament-admin-bar [data-admin-bar-resizer] {
+  height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: ns-resize;
+  touch-action: none;
+}
+
+.filament-admin-bar [data-admin-bar-resizer]::after {
+  content: '';
+  width: 44px;
+  height: 4px;
+  border-radius: var(--r-pill);
+  background: var(--line);
+  transition: background-color 200ms var(--ease);
+}
+
+.filament-admin-bar [data-admin-bar-resizer]:hover::after {
+  background: var(--accent);
+}
+
+.filament-admin-bar [data-admin-bar-header] {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding: 0 clamp(12px, 1.4vw, 20px) 12px;
+}
+
+.filament-admin-bar [data-admin-bar-actions] {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+}
+
+.filament-admin-bar [data-admin-bar-body] {
+  overflow-y: auto;
+  padding: 0 clamp(12px, 1.4vw, 20px) clamp(14px, 1.4vw, 20px);
+}
+
+/* ---------- tabs: pills in a soft track --------------------------------- */
+
+.filament-admin-bar [data-admin-bar-tabs] {
+  display: flex;
+  gap: 4px;
+  padding: 5px;
+  border-radius: var(--r-lg);
+  background: var(--fill);
+  list-style: none;
+  margin: 0;
+}
+
+.filament-admin-bar [data-admin-bar-tab] {
+  padding: 7px 14px;
+  border: 0;
+  border-radius: var(--r-pill);
+  background: transparent;
+  color: var(--muted);
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  cursor: pointer;
+  transition: background-color 200ms var(--ease), color 200ms var(--ease);
+}
+
+.filament-admin-bar [data-admin-bar-tab]:hover {
+  color: var(--ink);
+}
+
+.filament-admin-bar [data-admin-bar-tab][aria-selected='true'] {
+  background: var(--surface);
+  color: var(--ink);
+  box-shadow: var(--shadow-card);
+}
+
+.filament-admin-bar [data-admin-bar-tab] [data-count] {
+  padding: 2px 7px;
+  margin-left: 6px;
+  border-radius: var(--r-pill);
+  background: var(--fill);
+  color: var(--muted);
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------- header actions ---------------------------------------------- */
+
+.filament-admin-bar [data-admin-bar-action] {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border: 1px solid var(--line);
+  border-radius: var(--r-pill);
+  background: var(--surface);
+  color: var(--ink);
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  text-decoration: none;
+  transition: background-color 200ms var(--ease);
+}
+
+.filament-admin-bar [data-admin-bar-action]:hover {
+  background: var(--fill);
+}
+
+.filament-admin-bar [data-admin-bar-close] {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: 0;
+  border-radius: var(--r-md);
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  transition: background-color 200ms var(--ease), color 200ms var(--ease);
+}
+
+.filament-admin-bar [data-admin-bar-close]:hover {
+  background: var(--fill);
+  color: var(--ink);
+}
+
+/* ---------- cards and tables -------------------------------------------- */
+
+.filament-admin-bar [data-admin-bar-card] {
+  background: var(--surface);
+  border: 1px solid var(--line-soft);
+  border-radius: var(--r-lg);
+  box-shadow: var(--shadow-card);
+  overflow: hidden;
+}
+
+.filament-admin-bar table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.filament-admin-bar th {
+  padding: 12px 16px;
+  text-align: left;
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  color: var(--muted);
+  border-bottom: 1px solid var(--line);
+  white-space: nowrap;
+}
+
+.filament-admin-bar tbody tr {
+  border-bottom: 1px solid var(--line-soft);
+}
+
+.filament-admin-bar tbody tr:hover {
+  background: var(--fill);
+}
+
+.filament-admin-bar td {
+  padding: 12px 16px;
+  vertical-align: top;
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--ink);
+}
+
+.filament-admin-bar td[data-key] {
+  font-family: var(--mono);
+  font-size: 14px;
+  color: var(--muted);
+}
+
+.filament-admin-bar [data-admin-bar-thumb] {
+  width: 96px;
+  height: 64px;
+  object-fit: cover;
+  border-radius: var(--r-sm);
+  border: 1px solid var(--line);
+}
+
+.filament-admin-bar [data-admin-bar-thumb-empty] {
+  background: repeating-linear-gradient(135deg, var(--fill) 0 6px, transparent 6px 12px);
+}
+
+/* ---------- fields ------------------------------------------------------- */
+
+.filament-admin-bar [data-admin-bar-search] {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1 1 260px;
+  max-width: 420px;
+  padding: 7px 12px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--r-md);
+  color: var(--faint);
+  transition: border-color 200ms var(--ease), box-shadow 200ms var(--ease);
+}
+
+.filament-admin-bar [data-admin-bar-search]:focus-within {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--accent) 14%, transparent);
+}
+
+.filament-admin-bar [data-admin-bar-search] input {
+  flex: 1;
+  border: 0;
+  background: transparent;
+  padding: 0;
+  font-size: 15px;
+  color: var(--ink);
+  outline: none;
+  box-shadow: none;
+}
+
+.filament-admin-bar input[type='text']:not([data-admin-bar-search] input) {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 8px 12px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--r-md);
+  font-size: 15px;
+  color: var(--ink);
+  transition: border-color 200ms var(--ease), box-shadow 200ms var(--ease);
+}
+
+.filament-admin-bar input[type='text']:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--accent) 14%, transparent);
+}
+
+.filament-admin-bar [data-admin-bar-submit] {
+  padding: 9px 18px;
+  border: 0;
+  border-radius: var(--r-pill);
+  background: var(--s-dark);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  cursor: pointer;
+  transition: filter 200ms var(--ease);
+}
+
+.filament-admin-bar [data-admin-bar-submit]:hover {
+  filter: brightness(1.12);
+}
+
+.filament-admin-bar [data-admin-bar-link] {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--accent);
+  text-decoration: none;
+}
+
+.filament-admin-bar [data-admin-bar-link]:hover {
+  text-decoration: underline;
+}
+
+/* ---------- states ------------------------------------------------------- */
+
+.filament-admin-bar [data-admin-bar-notice] {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px 14px;
+  margin-bottom: 12px;
+  border-radius: var(--r-md);
+  background: color-mix(in oklab, var(--hue-success) 12%, #fff);
+  color: color-mix(in oklab, var(--hue-success) 60%, #181614);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.filament-admin-bar [data-admin-bar-empty] {
+  padding: 48px 24px;
+  text-align: center;
+}
+
+.filament-admin-bar [data-admin-bar-empty] h3 {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.filament-admin-bar [data-admin-bar-empty] p {
+  max-width: 34ch;
+  margin: 6px auto 0;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--muted);
+}
+
+.filament-admin-bar [data-admin-bar-skeleton] {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.6fr);
+  gap: 16px;
+  padding: 0 16px 16px;
+}
+
+.filament-admin-bar [data-admin-bar-skeleton] span {
+  height: 14px;
+  border-radius: var(--r-sm);
+  background: var(--fill);
+  animation: filament-admin-bar-pulse 1.4s var(--ease) infinite;
+}
+
+@keyframes filament-admin-bar-pulse {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 0.9; }
+}
+
+.filament-admin-bar [data-admin-bar-spinner] {
+  animation: filament-admin-bar-spin 900ms linear infinite;
+}
+
+@keyframes filament-admin-bar-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ---------- focus, motion, mobile ---------------------------------------- */
+
+.filament-admin-bar :focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .filament-admin-bar [data-admin-bar-skeleton] span,
+  .filament-admin-bar [data-admin-bar-spinner] {
+    animation: none;
   }
 }
 
-@layer base {
-    .filament-admin-bar input {
-        box-shadow: none !important;
-        @apply block py-1.5 px-3.5 rounded-xl border border-gray-300 outline-hidden transition duration-75 focus:ring-1 focus:ring-inset focus:border-teal-500 focus:ring-teal-500 disabled:opacity-70;
-    }
+@media (max-width: 640px) {
+  /* Actions above the tabs, and the close button hard to the right edge. */
+  .filament-admin-bar [data-admin-bar-header] {
+    flex-direction: column-reverse;
+    align-items: stretch;
+  }
+
+  .filament-admin-bar [data-admin-bar-actions] {
+    width: 100%;
+    margin-left: 0;
+  }
+
+  .filament-admin-bar [data-admin-bar-close] {
+    margin-left: auto;
+  }
+
+  .filament-admin-bar [data-admin-bar-tabs] {
+    overflow-x: auto;
+  }
+
+  .filament-admin-bar [data-admin-bar-tab],
+  .filament-admin-bar [data-admin-bar-close],
+  .filament-admin-bar [data-admin-bar-trigger] {
+    min-height: 44px;
+  }
 }

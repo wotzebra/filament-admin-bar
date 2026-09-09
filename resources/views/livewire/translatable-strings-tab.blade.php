@@ -1,100 +1,110 @@
-<div>
-    <div class="mb-3">
-        <label class="group relative flex items-center md:w-1/2">
-            <span
-                class="
-                    absolute inset-y-0 left-3 m-auto
-                    flex items-center justify-center h-9 w-9
-                    text-gray-400
-                    group-focus-within:text-teal-500
-                "
-            >
-                <x-heroicon-o-magnifying-glass class="w-7 h-7" />
-            </span>
+<div
+    x-data
+    @admin-bar-strings-saved.window="Livewire.navigate(window.location.href)"
+>
+    <div class="flex items-center gap-3 mb-3 flex-wrap">
+        <label data-admin-bar-search>
+            <x-heroicon-o-magnifying-glass class="w-4.5 h-4.5 shrink-0" />
             <input
                 type="text"
+                placeholder="Search strings on this page"
                 wire:model.live.debounce.1000ms="query"
-                class="w-full py-1 px-4.5 pl-14"
             >
         </label>
+
+        <span style="font-size: 13px; color: var(--faint)">
+            {{ trans_choice('{0}No strings on this page|{1}1 string on this page|[2,*]:count strings on this page', $strings->count(), ['count' => $strings->count()]) }}
+        </span>
+
+        {{-- Copy that renders after this tab mounted — a lazy component, a
+             deferred island — joins the list on the next look. --}}
+        <button type="button" data-admin-bar-link wire:click="setFields">
+            <x-heroicon-o-arrow-path class="w-4 h-4" />
+            Refresh
+        </button>
     </div>
 
     <div wire:loading>
-        <div class="flex items-center gap-2 w-full">
-            <x-heroicon-o-arrow-path class="w-8 h-8 animate-spin" />
-            Loading...
+        <div data-admin-bar-card>
+            <div class="flex items-center gap-3 p-4">
+                <x-heroicon-o-arrow-path class="w-4.5 h-4.5" data-admin-bar-spinner />
+                <span style="font-size: 15px; color: var(--muted)">Loading translatable strings…</span>
+            </div>
+
+            <div data-admin-bar-skeleton>
+                @for ($row = 0; $row < 4; $row++)
+                    <span></span><span></span>
+                @endfor
+            </div>
         </div>
     </div>
 
     <div wire:loading.remove>
         @if ($message)
-            <div class="flex items-center gap-2 w-full mb-3">
-                <x-heroicon-o-check-circle class="w-8 h-8 text-green-400" />
+            <div data-admin-bar-notice>
+                <x-heroicon-o-check-circle class="w-4.5 h-4.5 shrink-0" />
                 {{ $message }}
             </div>
         @endif
 
-        @if ($strings->count() ?? false)
-            <div class="rounded-2xl border border-gray-300 bg-white overflow-auto">
-                <table class="w-full">
-                    <tr class="bg-gray-100">
-                        <th class="py-1.5 px-3 text-left font-medium text-gray-600 min-w-104">Name</th>
-                        <th class="py-1.5 px-3 text-left font-medium text-gray-600 min-w-104">Translation</th>
-                    </tr>
-                    @foreach ($strings as $string)
-                        <tr class="border-t border-gray-300" wire:key="{{ $string->id }}_string_row">
-                            <td class="py-1.5 px-3">
-                                {{ $string->key }}
-                            </td>
-
-                            <td class="py-1.5 px-3">
-                                @if ($string->is_html)
-                                    <a
-                                        class="
-                                            filament-link filament-tables-link-action
-                                            inline-flex items-center justify-center gap-1
-                                            font-medium text-teal-600
-                                            outline-hidden no-underline focus:underline
-                                            hover:underline hover:text-teal-500
-                                        "
-                                        href="/admin/translatable-strings/{{ $string->id }}/edit?locale=-{{ app()->getLocale() }}-tab"
-                                        target="_blank"
-                                    >
-                                        <x-heroicon-o-pencil-square class="filament-link-icon w-8 h-8"/>
-                                        Edit in CMS
-                                    </a>
-                                @else
-                                    <input
-                                        class="w-full"
-                                        type="text"
-                                        wire:model.defer="fields.{{ $string->id }}"
-                                    >
-                                @endif
-                            </td>
+        @if ($strings->count())
+            <div data-admin-bar-card>
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="width: 300px">Name</th>
+                            <th>Translation</th>
                         </tr>
-                    @endforeach
+                    </thead>
+                    <tbody>
+                        @foreach ($strings as $string)
+                            <tr wire:key="{{ $string->id }}_string_row">
+                                <td data-key style="vertical-align: middle; padding: 10px 16px">
+                                    {{ $string->key }}
+                                </td>
+
+                                <td style="vertical-align: middle; padding: 10px 16px">
+                                    @if ($string->is_html)
+                                        <a
+                                            data-admin-bar-link
+                                            href="/admin/translatable-strings/{{ $string->id }}/edit?locale=-{{ app()->getLocale() }}-tab"
+                                            target="_blank"
+                                        >
+                                            <x-heroicon-o-arrow-top-right-on-square class="w-4 h-4" />
+                                            Edit rich text in CMS
+                                        </a>
+                                    @else
+                                        <input type="text" wire:model.defer="fields.{{ $string->id }}">
+                                    @endif
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
                 </table>
             </div>
 
-            <button
-                class="
-                    inline-flex items-center justify-center gap-1
-                    py-1 px-4 min-h-9 mt-4
-                    font-medium text-white
-                    rounded-xl border shadow border-transparent bg-teal-600
-                    transition-colors
-                    outline-hidden focus:ring-offset-2 focus:ring-2 focus:ring-inset focus:ring-white
-                    focus:bg-teal-700 focus:ring-offset-teal-700
-                    hover:bg-teal-500
-                "
-                wire:click="submit"
-            >
-                Save translations
-            </button>
+            <div class="flex items-center gap-3 mt-4">
+                <button type="button" data-admin-bar-submit wire:click="submit">
+                    Save translations
+                </button>
+
+                <span style="font-size: 13px; color: var(--faint)">
+                    Editing {{ strtoupper(app()->getLocale()) }}
+                </span>
+            </div>
         @else
-            <div class="flex items-center gap-2 w-full">
-                <x-heroicon-o-x-circle class="w-8 h-8" />
-                No translatable strings found
+            <div data-admin-bar-card>
+                <div data-admin-bar-empty>
+                    <h3>No translatable strings found</h3>
+                    <p>
+                        @if ($query)
+                            Nothing on this page matches “{{ $query }}”. Clear the search to see
+                            everything this page resolved.
+                        @else
+                            Nothing on this page is editable as a string yet.
+                        @endif
+                    </p>
+                </div>
             </div>
         @endif
     </div>

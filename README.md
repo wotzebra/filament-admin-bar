@@ -4,6 +4,67 @@ This package will add an admin bar to the frontend, only visible for logged in F
 
 ![img.png](docs/img.png)
 
+## Tabs
+
+Five tabs ship with the package, and each decides for itself whether it has
+anything to show:
+
+| Tab | Shows |
+|---|---|
+| SEO | What the page reports to search engines |
+| Translatable strings | The copy on this page, editable in place |
+| Media | The images on this page, and which of them have no alt text |
+| Records | The CMS records behind this page, linked to their edit screens |
+| Redirect | Only on a 404: create a redirect from the URL that just failed |
+
+Only the active tab is rendered. Listing a tab therefore costs what it costs
+when somebody opens it, not on every frontend request an admin makes.
+
+## Telling the bar which record a page is
+
+Detail pages need no wiring: anything bound to the route is picked up, so the
+"Edit page in CMS" action and the Records tab work on them out of the box.
+
+Index and home pages resolve their record some other way, so they say so —
+usually from the one place an application already funnels them through:
+
+```php
+admin_bar_record($staticPage);          // this page contains it
+admin_bar_record($vacancy, primary: true); // this page *is* it
+```
+
+The header action opens the primary record. Everything else is a click away in
+the Records tab.
+
+## The redirect tab
+
+It only appears on a 404, which is the one moment the old URL is in front of
+you. Your error view has to say so before the layout renders the bar:
+
+```blade
+@php
+    \Wotz\FilamentAdminBar\Tabs\RedirectsTab::markNotFound();
+@endphp
+```
+
+## Editable strings
+
+The package ships a `Translator` that records which keys a page resolved, so
+the Translatable strings tab knows what to offer. Swap it in from your own
+application:
+
+```php
+$this->app->extend('translator', fn ($translator, $app) => new \Wotz\FilamentAdminBar\Translator(
+    $translator->getLoader(),
+    $translator->getLocale(),
+));
+```
+
+Keys are collected for the whole page view, including the lazy Livewire
+components and deferred islands it renders afterwards, and the list starts empty
+on the next page. Nothing is recorded for a visitor who is not signed in to the
+panel.
+
 ## Installation
 
 You can install the package via composer:

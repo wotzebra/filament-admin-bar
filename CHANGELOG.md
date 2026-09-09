@@ -5,6 +5,71 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## Unreleased
+
+**The bar is the route from the live site back into the CMS, and it was only
+half of one.** Restyled to the Brigada theme, three bugs closed, three tabs
+added.
+
+### Fixed
+
+* **Strings that render late now appear.** Copy inside a lazy Livewire
+  component, a deferred island or any ajax response was missing from the
+  Translatable strings tab. The tab read the bag once in `mount()` with
+  `session()->pull()` — read *and* forget — and froze the key list in component
+  state. So the list was a snapshot of the initial render, the read emptied the
+  bag, and nothing reset it on a new page load: a string translated late on
+  page A surfaced in the bar on page B, one navigation later. The bag is now
+  read rather than pulled, the list derived per render, and middleware clears it
+  on full document GETs only — so it accumulates across one page view and every
+  sub-request that page makes.
+* **The translator stopped writing the session for every visitor.** It recorded
+  every resolved key *and its value*, on every lookup, for anyone at all —
+  while importing `Filament` and never using it, which is the auth guard it was
+  supposed to have. It now records keys only, only for somebody signed in to the
+  panel, and cannot throw where no panel is registered. Keys are stored as
+  literal array keys rather than through dot notation, so `foo` and `foo.bar`
+  no longer collide.
+* **Saved strings appear on the next request, not in a minute.** `submit()`
+  leant on a queued export job per updated row, which is where "please wait a
+  minute" came from — and on an application whose default queue carries other
+  work, the wait was unbounded. Saving now exports once per scope
+  synchronously and re-renders through `Livewire.navigate`, so the result is
+  correct by construction and the bar keeps its open state.
+
+### Added
+
+* **Media tab.** The images on this page, with the one thing about them an
+  editor cannot see by looking: whether they have alt text. Any locale with
+  text in it counts as described, because `alt` is translatable and asking for
+  `->alt` answers in whichever locale the request happens to be in.
+* **Records tab.** The CMS records behind the page, linked to their edit
+  screens — which turns an index page into a jump list of what it shows.
+* **Redirect tab, on 404s only.** The moment you find a broken link is the
+  moment you want to fix it, and the only moment the old URL is in front of you.
+* **"Edit page in CMS" in the header,** resolving the record the page *is*.
+  Detail pages need no wiring: anything bound to the route is picked up.
+  Index and home pages register their own with `admin_bar_record()`.
+
+### Changed
+
+* **Restyled to the Brigada theme**, painting from the palette the visitor
+  chose in the CMS (`localStorage.brigadaPalette`, falling back to `brio-05`
+  when storage is empty, blocked or unrecognised). Colour is plain custom
+  properties rather than Tailwind colour utilities, because no utility class can
+  follow a palette chosen at runtime.
+* **One tab is rendered, not all of them.** Every tab used to render on every
+  page load with the inactive ones hidden by `display: none` — a tab's worth of
+  queries per tab, on every frontend request an admin makes. At two tabs that
+  was tolerable; the media and records tabs each walk the page's content, so it
+  is not.
+* **The bar renders in the browser's top layer** via `popover="manual"` rather
+  than bidding its `z-index` up against a chat launcher sitting on 999999, and
+  publishes `--admin-bar-height` on the document so a host site can move its
+  widget clear of the open sheet.
+* Closed state is a bottom-**left** edge tab, out of the corner those widgets
+  default to. New config: `corner`, `default_palette`, `edit_page_url`, `panel`.
+
 ## v2.1.1 - 2026-04-27
 
 ### What's Changed

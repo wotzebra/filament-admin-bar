@@ -4,6 +4,7 @@ namespace Wotz\FilamentAdminBar\Livewire;
 
 use Filament\Facades\Filament;
 use Livewire\Component;
+use Wotz\FilamentAdminBar\Support\PageRecords;
 use Wotz\FilamentAdminBar\Tabs\Tab;
 
 class AdminBar extends Component
@@ -36,7 +37,30 @@ class AdminBar extends Component
         return view('filament-admin-bar::livewire.admin-bar', [
             'tabs' => $tabs,
             'activeTab' => $tabs->first(fn (Tab $tab) => $tab->key() === $this->current),
+            'editUrl' => $this->editUrl(),
         ]);
+    }
+
+    /**
+     * Where to edit the record this page *is*.
+     *
+     * The header has room for one action, and a detail page resolves two
+     * records — the item and the index page it sits under. The item wins:
+     * somebody who followed a link to a vacancy and pressed edit means the
+     * vacancy. The index page is a click away in the Records tab.
+     */
+    protected function editUrl(): ?string
+    {
+        $closure = config('filament-admin-bar.edit_page_url');
+
+        $records = app(PageRecords::class);
+        $record = $records->primary();
+
+        if ($closure instanceof \Closure) {
+            return $closure($record);
+        }
+
+        return $record === null ? null : $records->editUrl($record);
     }
 
     public function changeTab(string $tab): void
