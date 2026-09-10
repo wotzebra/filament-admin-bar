@@ -12,6 +12,16 @@ class AdminBar extends Component
 {
     public ?string $current = null;
 
+    /**
+     * Where to edit the record this page *is*.
+     *
+     * Resolved on the page view and then carried, like every tab's snapshot:
+     * the collector behind it is request-scoped, so by the time somebody
+     * clicks a tab the request that knew is over and the action would quietly
+     * disappear from the header.
+     */
+    public ?string $editUrl = null;
+
     public function render()
     {
         if (config('filament-admin-bar.filament-guard') && ! auth()->guard(config('filament-admin-bar.filament-guard'))->check()) {
@@ -32,6 +42,8 @@ class AdminBar extends Component
          */
         if (PageView::isStarting()) {
             $tabs->each(fn (Tab $tab) => $tab->capture());
+
+            $this->editUrl = $this->resolveEditUrl();
         }
 
         $tabs = $tabs->filter(fn (Tab $tab) => $tab->canSee())->values();
@@ -55,19 +67,17 @@ class AdminBar extends Component
         return view('filament-admin-bar::livewire.admin-bar', [
             'tabs' => $tabs,
             'activeTab' => $tabs->first(fn (Tab $tab) => $tab->key() === $this->current),
-            'editUrl' => $this->editUrl(),
+            'editUrl' => $this->editUrl,
         ]);
     }
 
     /**
-     * Where to edit the record this page *is*.
-     *
      * The header has room for one action, and a detail page resolves two
      * records — the item and the index page it sits under. The item wins:
      * somebody who followed a link to a vacancy and pressed edit means the
      * vacancy. The index page is a click away in the Records tab.
      */
-    protected function editUrl(): ?string
+    protected function resolveEditUrl(): ?string
     {
         $closure = config('filament-admin-bar.edit_page_url');
 
