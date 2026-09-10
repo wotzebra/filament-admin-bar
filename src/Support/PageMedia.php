@@ -28,6 +28,16 @@ class PageMedia
             return;
         }
 
+        /*
+         * Hosts wire this to a model event, which fires wherever attachments
+         * are read — including a queued job walking every one of them. There
+         * is no page there to describe, and holding all of them would be a
+         * memory leak with nobody to show it to.
+         */
+        if (app()->runningInConsole() && ! app()->runningUnitTests()) {
+            return;
+        }
+
         $this->attachments->put((string) $attachment->getKey(), $attachment);
     }
 
