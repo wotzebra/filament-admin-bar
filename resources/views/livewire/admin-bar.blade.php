@@ -4,25 +4,24 @@
     $corner = config('filament-admin-bar.corner') === 'right' ? 'bottom-right' : 'bottom-left';
 
     /*
-     * How far to sit above the bottom edge. Zero by default — the bar belongs
-     * against it — but a site with something else already pinned full-width
-     * down there says so, and the bar stops covering it.
+     * How far along the bottom edge the closed trigger starts. It steps
+     * further in on its own if it finds something already parked there.
      */
-    $offset = (int) config('filament-admin-bar.offset_bottom', 0);
+    $inset = (int) config('filament-admin-bar.inset_inline', 20);
 @endphp
 
 <div
     class="filament-admin-bar"
     x-bind:class="palette"
     data-corner="{{ $corner }}"
-    x-bind:style="`--ab-offset-block-end: ${offset}px`"
-    x-bind:data-raised="offset > 0 ? 'true' : null"
+    x-bind:style="`--ab-inset-inline-start: ${inlineStart}px`"
     popover="manual"
     x-data="{
         open: false,
         palette: null,
-        offset: @js($offset),
-        minimumOffset: @js($offset),
+        inlineStart: @js($inset),
+        defaultInlineStart: @js($inset),
+        triggerBlocked: false,
         remeasuring: false,
         listenForResize: false,
         adminBarHeight: '400px',
@@ -85,32 +84,22 @@
             return @js($fallbackPalette)
         },
         /*
-         * How much of the bottom edge is already taken.
+         * What else is sitting in the corner the closed trigger wants.
          *
-         * The bar pins itself to that edge and so does everything else that
-         * wants to be permanent — a dev toolbar, a cookie strip, a sticky
-         * basket. A number in config cannot answer this: Laravel Debugbar
-         * alone is a full-width strip in one state and a small corner button
-         * in another, and it switches between them while the page is open.
+         * The bar belongs against the bottom edge, and so does everything else
+         * that wants to be permanent — a dev toolbar, a cookie strip. Laravel
+         * Debugbar is the usual one, and it is a small corner button in one
+         * state and a bar across the whole edge in another.
          *
-         * Only things that would actually be covered count: fixed to the
-         * bottom edge, short enough to be chrome rather than an overlay, and
-         * horizontally in the way of where the bar's own trigger sits.
+         * Small enough to step around, the trigger steps around it. Spanning
+         * the edge, there is nowhere to step to and the trigger gets out of
+         * the way until it is closed again — anybody reading a toolbar is not
+         * reaching for the admin bar at that moment.
          */
         measureBottomEdge () {
-            const trigger = this.$el.querySelector('[data-admin-bar-trigger]')
-            const box = trigger?.getBoundingClientRect()
-
-            /*
-             * The trigger is only laid out while the bar is closed. Open, the
-             * sheet spans the whole width, so everything on that edge is in
-             * the way.
-             */
-            const mine = box?.width
-                ? { left: box.left, right: box.right }
-                : { left: 0, right: window.innerWidth }
-
-            let taken = this.minimumOffset
+            const toRight = this.$el.dataset.corner === 'bottom-right'
+            let inlineStart = this.defaultInlineStart
+            let blocked = false
 
             for (const element of document.body.children) {
                 if (element === this.$el || this.$el.contains(element)) continue
@@ -120,26 +109,35 @@
                 if (styles.position !== 'fixed') continue
                 if (styles.display === 'none' || styles.visibility === 'hidden') continue
 
-                const theirs = element.getBoundingClientRect()
+                const box = element.getBoundingClientRect()
 
-                if (theirs.width === 0 || theirs.height === 0) continue
+                if (box.width === 0 || box.height === 0) continue
 
-                // Sitting on the bottom edge, rather than merely somewhere low.
-                if (Math.abs(theirs.bottom - window.innerHeight) > 2) continue
+                // On the bottom edge, rather than merely somewhere low.
+                if (Math.abs(box.bottom - window.innerHeight) > 2) continue
 
-                // Past half the viewport it is a modal or a takeover rather
-                // than chrome along the edge, and climbing over it would put
-                // the bar in the middle of the screen.
-                if (theirs.height > window.innerHeight / 2) continue
+                // Tall enough to be a modal, a takeover or a full-page
+                // overlay, which reaches the bottom edge without being
+                // anything that lives there.
+                if (box.height > window.innerHeight / 2) continue
 
-                // Off to one side, where the bar was never going anyway.
-                if (theirs.right < mine.left || theirs.left > mine.right) continue
+                if (box.width > window.innerWidth / 2) {
+                    blocked = true
 
-                taken = Math.max(taken, Math.round(theirs.height))
+                    continue
+                }
+
+                // Only what is in this corner: the far one is not in the way.
+                const reach = toRight
+                    ? window.innerWidth - box.left
+                    : box.right
+
+                if (reach > window.innerWidth / 2) continue
+
+                inlineStart = Math.max(inlineStart, Math.round(reach) + 12)
             }
 
-            // Never so far up that the bar is floating in the page.
-            return Math.min(taken, Math.round(window.innerHeight / 2))
+            return { inlineStart, blocked }
         },
         watchBottomEdge () {
             const remeasure = () => {
@@ -149,7 +147,11 @@
 
                 window.requestAnimationFrame(() => {
                     this.remeasuring = false
-                    this.offset = this.measureBottomEdge()
+
+                    const edge = this.measureBottomEdge()
+
+                    this.inlineStart = edge.inlineStart
+                    this.triggerBlocked = edge.blocked
                 })
             }
 
@@ -194,7 +196,7 @@
     {{-- Closed: the only way back in. --}}
     <button
         type="button"
-        x-show="! open"
+        x-show="! open && ! triggerBlocked"
         x-cloak
         x-on:click="toggle()"
         data-admin-bar-trigger

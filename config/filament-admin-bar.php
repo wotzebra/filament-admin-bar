@@ -49,13 +49,12 @@ return [
     'corner' => 'left',
 
     /*
-     * A floor, in pixels, for how far above the bottom edge the bar sits.
+     * How far along the bottom edge the closed trigger starts, in pixels.
      *
-     * Usually nothing: the bar measures that edge itself and climbs over
-     * whatever it finds pinned there, re-measuring when it changes. Set this
-     * only for something measurement cannot see.
+     * It steps further in on its own when it finds something already parked
+     * in that corner, so this is only the resting position.
      */
-    'offset_bottom' => 0,
+    'inset_inline' => 20,
 
     /*
      * The palette the bar paints itself in when the visitor has never chosen

@@ -36,16 +36,16 @@ admin_bar_record($vacancy, primary: true); // this page *is* it
 The header action opens the primary record. Everything else is a click away in
 the Records tab.
 
-## Sitting above something else
+## Sharing the corner
 
-The bar pins itself to the bottom edge, closed and open — and so does
-everything else that wants to be permanent: a dev toolbar, a cookie strip, a
-sticky basket. It measures that edge and climbs over whatever it finds there,
-re-measuring when it changes, so nothing needs configuring for the usual case.
-Laravel Debugbar is a full-width strip in one state and a corner button in
-another; both are handled.
+The closed trigger sits against the bottom edge, and so does everything else
+that wants to be permanent — a dev toolbar, a cookie strip. It steps along the
+edge to clear anything small parked in its corner, and takes itself out of the
+way entirely while something spans that edge, coming back when it closes.
+Laravel Debugbar does all three: a corner button, a full-width strip, and an
+open panel.
 
-`offset_bottom` sets a floor, in pixels, for something measurement cannot see.
+`inset_inline` sets where it rests when the corner is free.
 
 ## Telling the bar which images a page draws
 

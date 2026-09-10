@@ -73,14 +73,6 @@
   --mono: ui-monospace, 'SF Mono', Menlo, monospace;
 
   /* Overridable by the host site when a widget sits in the same corner. */
-  /*
-   * How far the whole bar sits above the bottom edge. Zero, because the bar
-   * belongs against it — but a site that already pins something full-width
-   * down there (a dev toolbar, a cookie strip, a sticky basket) sets this and
-   * the bar stops covering it.
-   */
-  --ab-offset-block-end: 0px;
-
   --ab-inset-block-end: 20px;
   --ab-inset-inline-start: 20px;
 
@@ -94,7 +86,7 @@
    * fallback for where the top layer is unavailable.
    */
   position: fixed;
-  inset: auto 0 var(--ab-offset-block-end) 0;
+  inset: auto 0 0 0;
   z-index: 2147483000;
   margin: 0;
   padding: 0;
@@ -172,7 +164,7 @@
 
 .filament-admin-bar [data-admin-bar-trigger] {
   position: fixed;
-  bottom: var(--ab-offset-block-end);
+  bottom: 0;
   left: var(--ab-inset-inline-start);
   display: inline-flex;
   align-items: center;
@@ -188,17 +180,6 @@
   box-shadow: 0 -6px 18px color-mix(in oklab, var(--s-dark) 22%, transparent);
   transition: padding-bottom 200ms var(--ease);
   cursor: pointer;
-}
-
-/*
- * Flush against the edge the trigger reads as a tab pulled up out of it, which
- * is why only its top corners are round. Lifted clear of something else it is
- * a floating pill, and square bottom corners just look torn.
- */
-.filament-admin-bar[data-raised='true'] [data-admin-bar-trigger] {
-  border-radius: var(--r-md);
-  padding-bottom: 8px;
-  margin-bottom: 6px;
 }
 
 .filament-admin-bar[data-corner='bottom-right'] [data-admin-bar-trigger] {
