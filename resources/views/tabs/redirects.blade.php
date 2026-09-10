@@ -3,8 +3,8 @@
         <div style="display: flex; align-items: flex-start; gap: 10px; padding: 16px">
             <x-heroicon-o-exclamation-triangle class="w-4.5 h-4.5 shrink-0" style="color: var(--hue-warning)" />
             <span style="font-size: 15px; line-height: 1.5">
-                A redirect from <code style="font-family: var(--mono)">{{ $from }}</code> already exists,
-                pointing at <code style="font-family: var(--mono)">{{ $existing->to }}</code> — and this
+                A redirect from <code>{{ $from }}</code> already exists,
+                pointing at <code>{{ $existing->to }}</code> — and this
                 page still 404s, so something downstream of it is broken.
             </span>
         </div>
@@ -13,7 +13,7 @@
             <div style="display: flex; align-items: flex-start; gap: 10px">
                 <x-heroicon-o-link-slash class="w-4.5 h-4.5 shrink-0" style="color: var(--faint)" />
                 <span style="font-size: 15px; line-height: 1.5">
-                    Nothing lives at <code style="font-family: var(--mono)">{{ $from }}</code>.
+                    Nothing lives at <code>{{ $from }}</code>.
                     If it used to, send visitors somewhere sensible — the closest page, not the homepage.
                 </span>
             </div>

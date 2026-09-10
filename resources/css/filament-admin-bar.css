@@ -123,6 +123,28 @@
   cursor: pointer;
 }
 
+/* ---------- inline code ------------------------------------------------- */
+
+/*
+ * The reset says what `code` must not inherit but never what colour it is, so
+ * a host that styles `code` at all wins — Bootstrap ships `code { color:
+ * var(--bs-code-color) }`, which on a site with a light accent painted the
+ * URLs this bar prints in near-white, on the bar's own white card.
+ *
+ * The paths and keys shown here are the thing an editor came to read, so they
+ * get stated rather than left to whatever the page around them does.
+ */
+.filament-admin-bar code,
+.filament-admin-bar kbd,
+.filament-admin-bar samp {
+  padding: 0.1em 0.25em;
+  border-radius: var(--r-sm);
+  background: var(--fill);
+  color: var(--ink);
+  font-family: var(--mono);
+  font-size: 0.9em;
+}
+
 /* ---------- closed state: the edge tab --------------------------------- */
 
 .filament-admin-bar [data-admin-bar-trigger] {
