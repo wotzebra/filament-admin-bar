@@ -73,6 +73,14 @@
   --mono: ui-monospace, 'SF Mono', Menlo, monospace;
 
   /* Overridable by the host site when a widget sits in the same corner. */
+  /*
+   * How far the whole bar sits above the bottom edge. Zero, because the bar
+   * belongs against it — but a site that already pins something full-width
+   * down there (a dev toolbar, a cookie strip, a sticky basket) sets this and
+   * the bar stops covering it.
+   */
+  --ab-offset-block-end: 0px;
+
   --ab-inset-block-end: 20px;
   --ab-inset-inline-start: 20px;
 
@@ -86,7 +94,7 @@
    * fallback for where the top layer is unavailable.
    */
   position: fixed;
-  inset: auto 0 0 0;
+  inset: auto 0 var(--ab-offset-block-end) 0;
   z-index: 2147483000;
   margin: 0;
   padding: 0;
@@ -164,7 +172,7 @@
 
 .filament-admin-bar [data-admin-bar-trigger] {
   position: fixed;
-  bottom: 0;
+  bottom: var(--ab-offset-block-end);
   left: var(--ab-inset-inline-start);
   display: inline-flex;
   align-items: center;

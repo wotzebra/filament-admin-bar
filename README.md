@@ -36,6 +36,17 @@ admin_bar_record($vacancy, primary: true); // this page *is* it
 The header action opens the primary record. Everything else is a click away in
 the Records tab.
 
+## Sitting above something else
+
+The bar pins itself to the bottom edge, closed and open. A site that already
+has something full-width down there — a dev toolbar, a cookie strip, a sticky
+basket — raises it rather than being covered:
+
+```php
+// config/filament-admin-bar.php
+'offset_bottom' => 33, // Laravel Debugbar's minimised strip
+```
+
 ## Telling the bar which images a page draws
 
 The Media tab lists the images the page loaded and flags the ones with no alt

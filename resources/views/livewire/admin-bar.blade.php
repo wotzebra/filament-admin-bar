@@ -2,12 +2,20 @@
     $palettes = ['brio-01', 'brio-02', 'brio-03', 'brio-04', 'brio-05', 'brio-06'];
     $fallbackPalette = config('filament-admin-bar.default_palette', 'brio-05');
     $corner = config('filament-admin-bar.corner') === 'right' ? 'bottom-right' : 'bottom-left';
+
+    /*
+     * How far to sit above the bottom edge. Zero by default — the bar belongs
+     * against it — but a site with something else already pinned full-width
+     * down there says so, and the bar stops covering it.
+     */
+    $offset = (int) config('filament-admin-bar.offset_bottom', 0);
 @endphp
 
 <div
     class="filament-admin-bar"
     x-bind:class="palette"
     data-corner="{{ $corner }}"
+    style="--ab-offset-block-end: {{ $offset }}px"
     popover="manual"
     x-data="{
         open: false,

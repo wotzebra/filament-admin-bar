@@ -49,6 +49,14 @@ return [
     'corner' => 'left',
 
     /*
+     * How many pixels above the bottom edge the bar sits, closed and open.
+     * Zero, because that edge is where it belongs — raise it on a site that
+     * already pins something full-width down there and would otherwise be
+     * covered. Laravel Debugbar's minimised strip is the usual one, at 33.
+     */
+    'offset_bottom' => 0,
+
+    /*
      * The palette the bar paints itself in when the visitor has never chosen
      * one in the CMS. brio-01 … brio-06.
      */
