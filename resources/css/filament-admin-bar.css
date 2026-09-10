@@ -102,6 +102,21 @@
   display: block;
 }
 
+/* ---------- colour that the page cannot repaint -------------------------- */
+
+/*
+ * The reset the package ships covers box model and type but says nothing about
+ * colour, so any host rule that names an element outright wins by default —
+ * Bootstrap alone paints `code` and every heading that way. The bar then
+ * printed its own text in whatever the site uses for source listings.
+ *
+ * Text in here belongs to the bar. Everything below this line may still say
+ * otherwise; the point is that nothing outside it can.
+ */
+.filament-admin-bar :is(a, p, span, li, label, h1, h2, h3, h4, h5, h6, code, kbd, samp, small, strong, em) {
+  color: inherit;
+}
+
 /* ---------- button chrome ----------------------------------------------- */
 
 /*
