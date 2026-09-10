@@ -3,7 +3,6 @@
 use Filament\Facades\Filament;
 use Illuminate\Foundation\Auth\User;
 use Illuminate\Http\Request;
-use Wotz\FilamentAdminBar\Http\Middleware\ResetTranslatableStringsBag;
 use Wotz\FilamentAdminBar\Translator;
 
 /**
@@ -22,7 +21,13 @@ use Wotz\FilamentAdminBar\Translator;
  */
 function translator(): Translator
 {
-    return new Translator(app('translation.loader'), app()->getLocale());
+    // A singleton in the application, so one instance per test here too: the
+    // "is this a new page view?" flag lives on the instance.
+    if (! app()->bound('admin-bar-test-translator')) {
+        app()->instance('admin-bar-test-translator', new Translator(app('translation.loader'), app()->getLocale()));
+    }
+
+    return app('admin-bar-test-translator');
 }
 
 function signIn(): void
@@ -39,6 +44,11 @@ function signIn(): void
 
 beforeEach(function () {
     session()->flush();
+    app()->forgetInstance('admin-bar-test-translator');
+
+    $request = Request::create('/a-page', 'GET');
+    $request->headers->set('Accept', 'text/html');
+    app()->instance('request', $request);
 });
 
 it('records a key that was asked for', function () {
@@ -95,11 +105,16 @@ it('accumulates across the sub-requests one page makes', function () {
     signIn();
 
     // The document itself…
+    $document = Request::create('/a-page', 'GET');
+    $document->headers->set('Accept', 'text/html');
+    app()->instance('request', $document);
     translator()->get('first.key');
 
-    // …then a lazy Livewire component on the same page.
-    request()->headers->set('X-Livewire', 'true');
-    app(ResetTranslatableStringsBag::class)->handle(request(), fn ($request) => response(''));
+    // …then a lazy Livewire component on the same page, which is a POST and
+    // therefore not a new page view.
+    $update = Request::create('/livewire/update', 'POST');
+    $update->headers->set('X-Livewire', 'true');
+    app()->instance('request', $update);
     translator()->get('second.key');
 
     // A string resolved late is exactly the string that used to go missing.
@@ -110,15 +125,22 @@ it('accumulates across the sub-requests one page makes', function () {
 it('starts empty on the next page', function () {
     signIn();
 
+    $first = Request::create('/page-one', 'GET');
+    $first->headers->set('Accept', 'text/html');
+    app()->instance('request', $first);
     translator()->get('page.one');
 
-    $request = Request::create('/somewhere-else', 'GET');
-    $request->headers->set('Accept', 'text/html');
-    $request->setLaravelSession(session()->driver());
+    expect(array_keys(session()->get(Translator::BAG, [])))->toBe(['page.one']);
 
-    app(ResetTranslatableStringsBag::class)->handle($request, fn ($request) => response(''));
+    // A new document GET is a new page view. The translator is rebuilt because
+    // a real request rebuilds the container.
+    app()->forgetInstance('admin-bar-test-translator');
+    $second = Request::create('/page-two', 'GET');
+    $second->headers->set('Accept', 'text/html');
+    app()->instance('request', $second);
+    translator()->get('page.two');
 
     // Without this a string translated late on page A surfaced in the bar on
     // page B, one navigation later.
-    expect(session()->get(Translator::BAG, []))->toBe([]);
+    expect(array_keys(session()->get(Translator::BAG, [])))->toBe(['page.two']);
 });

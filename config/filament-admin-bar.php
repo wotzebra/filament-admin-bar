@@ -21,8 +21,14 @@ return [
     ],
 
     'translatable-strings-tab' => [
+        /*
+         * Keys the tab has no business offering. Filament's own strings resolve
+         * on a frontend page because the bar asks who is signed in, which boots
+         * the panel and translates its navigation — and the panel's wording is
+         * not what somebody standing on the front end came to edit.
+         */
         'excluded' => [
-            'filament-admin-bar::*',
+            'filament*::*',
             'routes.*',
         ],
     ],
