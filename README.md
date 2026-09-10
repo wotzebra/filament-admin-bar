@@ -36,6 +36,19 @@ admin_bar_record($vacancy, primary: true); // this page *is* it
 The header action opens the primary record. Everything else is a click away in
 the Records tab.
 
+## Telling the bar which images a page draws
+
+The Media tab lists the images the page loaded and flags the ones with no alt
+text. A page draws them from a great many templates and from one model, so the
+model is where to say it:
+
+```php
+Attachment::retrieved(fn (Attachment $attachment) => admin_bar_media($attachment));
+```
+
+Nothing is collected outside a page view, so a queued job that walks the whole
+library costs nothing.
+
 ## The redirect tab
 
 It only appears on a 404, which is the one moment the old URL is in front of
