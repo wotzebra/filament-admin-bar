@@ -5,6 +5,7 @@ namespace Wotz\FilamentAdminBar;
 use Filament\Facades\Filament;
 use Illuminate\Support\Str;
 use Illuminate\Translation\Translator as BaseTranslator;
+use Wotz\FilamentAdminBar\Support\PageView;
 
 class Translator extends BaseTranslator
 {
@@ -96,17 +97,7 @@ class Translator extends BaseTranslator
 
         $this->reset = true;
 
-        $request = request();
-
-        if (! $request->isMethod('GET')) {
-            return;
-        }
-
-        if ($request->hasHeader('X-Livewire') || $request->ajax() || $request->wantsJson()) {
-            return;
-        }
-
-        if ($request->acceptsHtml()) {
+        if (PageView::isStarting()) {
             session()->forget(self::BAG);
         }
     }
