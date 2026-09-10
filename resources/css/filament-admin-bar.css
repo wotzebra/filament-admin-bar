@@ -102,6 +102,27 @@
   display: block;
 }
 
+/* ---------- button chrome ----------------------------------------------- */
+
+/*
+ * The package ships its own reset rather than Tailwind's full preflight, and
+ * that reset says nothing about buttons — so a `<button>` styled only for
+ * colour and type keeps the browser's own grey fill and outset border. Every
+ * control in here that happens to be a button gets the chrome removed once,
+ * rather than each rule remembering to.
+ */
+.filament-admin-bar button {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  line-height: inherit;
+  text-align: inherit;
+  cursor: pointer;
+}
+
 /* ---------- closed state: the edge tab --------------------------------- */
 
 .filament-admin-bar [data-admin-bar-trigger] {
@@ -405,7 +426,12 @@
 }
 
 .filament-admin-bar [data-admin-bar-link] {
+  /* Used on both an `<a>` and a `<button>`; the two have to look identical. */
   display: inline-flex;
+  border: 0;
+  background: transparent;
+  padding: 0;
+  cursor: pointer;
   align-items: center;
   gap: 6px;
   font-size: 14px;
