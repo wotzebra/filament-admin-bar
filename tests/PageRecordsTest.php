@@ -92,13 +92,38 @@ it('offers no edit link for a model with no resource', function () {
 });
 
 it('hides the records tab when the page has none', function () {
-    expect((new RecordsTab)->canSee())->toBeFalse();
+    $tab = new RecordsTab;
+    $tab->capture();
+
+    expect($tab->canSee())->toBeFalse();
 });
 
 it('shows the records tab once the page has one', function () {
     app(PageRecords::class)->register(new Thing(['id' => 6, 'working_title' => 'Something']));
 
-    expect((new RecordsTab)->canSee())->toBeTrue();
+    $tab = new RecordsTab;
+    $tab->capture();
+
+    expect($tab->canSee())->toBeTrue();
+});
+
+it('still knows what was on the page after the request that drew it is over', function () {
+    app(PageRecords::class)->register(new Thing(['id' => 9, 'working_title' => 'Something']));
+
+    $tab = new RecordsTab;
+    $tab->capture();
+
+    // Clicking a tab is a Livewire POST — a different request, with an empty
+    // collector. Without the capture the tab renders blank, which is exactly
+    // what rendering one tab at a time broke.
+    app()->forgetInstance(PageRecords::class);
+
+    expect($tab->canSee())->toBeTrue();
+});
+
+it('has nothing to show when the page never captured anything', function () {
+    // No capture() call at all: a tab that was never on a page view.
+    expect((new RecordsTab)->canSee())->toBeFalse();
 });
 
 it('shows the redirects tab on a 404 and on nothing else', function () {

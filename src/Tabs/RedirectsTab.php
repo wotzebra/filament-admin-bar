@@ -31,17 +31,33 @@ class RedirectsTab extends Tab
         return static::$notFound;
     }
 
+    /**
+     * Whether the page *was* a 404 has to be remembered, like everything else
+     * here: the request that returned 404 is over by the time the tab renders.
+     */
+    public function capture(): void
+    {
+        $this->remember([
+            'not_found' => static::$notFound,
+            'from' => '/' . ltrim(request()->getRequestUri(), '/'),
+            'path' => request()->path(),
+        ]);
+    }
+
     public function canSee(): bool
     {
-        return static::$notFound && class_exists(Redirect::class);
+        return ($this->recall(['not_found' => false])['not_found'] ?? false)
+            && class_exists(Redirect::class);
     }
 
     public function render(): View
     {
+        $captured = $this->recall(['from' => '', 'path' => '']);
+
         return view('filament-admin-bar::tabs.redirects', [
-            'from' => '/' . ltrim(request()->getRequestUri(), '/'),
+            'from' => $captured['from'] ?? '',
             'existing' => class_exists(Redirect::class)
-                ? Redirect::query()->where('from', request()->path())->first()
+                ? Redirect::query()->where('from', $captured['path'] ?? '')->first()
                 : null,
         ]);
     }

@@ -5,6 +5,7 @@ namespace Wotz\FilamentAdminBar\Livewire;
 use Filament\Facades\Filament;
 use Livewire\Component;
 use Wotz\FilamentAdminBar\Support\PageRecords;
+use Wotz\FilamentAdminBar\Support\PageView;
 use Wotz\FilamentAdminBar\Tabs\Tab;
 
 class AdminBar extends Component
@@ -20,8 +21,20 @@ class AdminBar extends Component
         }
 
         $tabs = collect(config('filament-admin-bar.tabs', []))
-            ->map(fn (string $tab) => new $tab)
-            ->filter(fn (Tab $tab) => $tab->canSee());
+            ->map(fn (string $tab) => new $tab);
+
+        /*
+         * Tabs render one at a time, and a tab renders when somebody clicks it
+         * — a Livewire POST, a different request from the one that drew the
+         * page. Anything a tab reads out of the request itself is gone by then.
+         * So every tab, active or not, takes its copy of the page here, while
+         * the page is still the thing happening.
+         */
+        if (PageView::isStarting()) {
+            $tabs->each(fn (Tab $tab) => $tab->capture());
+        }
+
+        $tabs = $tabs->filter(fn (Tab $tab) => $tab->canSee())->values();
 
         if ($tabs->isEmpty()) {
             return '';

@@ -2,6 +2,8 @@
 
 namespace Wotz\FilamentAdminBar\Tabs;
 
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Collection;
 use Illuminate\View\View;
 use Wotz\FilamentAdminBar\Support\PageRecords;
 
@@ -22,29 +24,64 @@ class RecordsTab extends Tab
      */
     public const LIMIT = 25;
 
+    /**
+     * The collector is filled while the page renders, so the copy is taken then
+     * — by the time somebody clicks this tab, the request that knew is over.
+     */
+    public function capture(): void
+    {
+        $this->remember(
+            app(PageRecords::class)->all()
+                ->take(self::LIMIT * 2)
+                ->map(fn (Model $record): array => [
+                    'type' => $record->getMorphClass(),
+                    'id' => (string) $record->getKey(),
+                ])
+                ->all(),
+        );
+    }
+
     public function canSee(): bool
     {
-        return app(PageRecords::class)->all()->isNotEmpty();
+        return filled($this->recall([]));
     }
 
     public function render(): View
     {
         $collector = app(PageRecords::class);
+        $records = $this->records();
 
         return view('filament-admin-bar::tabs.records', [
-            'records' => $collector->all()
-                ->map(fn ($record): array => [
+            'records' => $records
+                ->take(self::LIMIT)
+                ->map(fn (Model $record): array => [
                     'label' => static::label($record),
                     'type' => class_basename($record),
                     'url' => $collector->editUrl($record),
-                ])
-                ->take(self::LIMIT),
-            'total' => $collector->all()->count(),
+                ]),
+            'total' => $records->count(),
             'limit' => self::LIMIT,
         ]);
     }
 
-    protected static function label(mixed $record): string
+    /**
+     * @return Collection<int, Model>
+     */
+    protected function records(): Collection
+    {
+        return collect($this->recall([]))
+            ->groupBy('type')
+            ->flatMap(function ($rows, string $type) {
+                if (! class_exists($type)) {
+                    return [];
+                }
+
+                return $type::query()->whereIn((new $type)->getKeyName(), collect($rows)->pluck('id'))->get();
+            })
+            ->values();
+    }
+
+    protected static function label(Model $record): string
     {
         foreach (['working_title', 'name', 'title', 'label'] as $attribute) {
             $value = $record->{$attribute} ?? null;
