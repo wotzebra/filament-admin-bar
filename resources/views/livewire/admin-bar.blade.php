@@ -6,10 +6,12 @@
 
 <div
     class="filament-admin-bar"
+    x-bind:class="palette"
     data-corner="{{ $corner }}"
     popover="manual"
     x-data="{
         open: false,
+        palette: null,
         listenForResize: false,
         adminBarHeight: '400px',
         palettes: @js($palettes),
@@ -47,27 +49,31 @@
             )
         },
         /*
-         * The palette the visitor chose in the CMS, read synchronously so the
-         * bar never paints in the wrong colour first. Storage can be empty,
+         * The palette the visitor chose in the CMS. Storage can be empty,
          * blocked, or hold something we do not recognise; all three fall back.
+         *
+         * Held in state and bound with `x-bind:class`, not added to
+         * `classList` — every Livewire update morphs this element and restores
+         * its `class` attribute from the server, which cannot know the
+         * palette. Adding the class imperatively meant it survived until the
+         * first tab switch and then vanished, taking every `var(--…)` in the
+         * stylesheet with it: no sheet background, no accent on the links.
          */
-        applyPalette () {
-            let palette = @js($fallbackPalette)
-
+        resolvePalette () {
             try {
                 const stored = window.localStorage.getItem('brigadaPalette')
 
                 if (stored && this.palettes.includes(stored)) {
-                    palette = stored
+                    return stored
                 }
             } catch (error) {
                 // Storage blocked entirely. The fallback stands.
             }
 
-            this.$el.classList.add(palette)
+            return @js($fallbackPalette)
         },
         init () {
-            this.applyPalette()
+            this.palette = this.resolvePalette()
             this.open = window.localStorage.getItem('filament-admin-bar-open') === 'true'
             this.adminBarHeight = window.localStorage.getItem('filament-admin-bar-height') || '400px'
             this.publishHeight()

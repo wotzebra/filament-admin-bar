@@ -50,14 +50,15 @@ you. Your error view has to say so before the layout renders the bar:
 ## Editable strings
 
 The package ships a `Translator` that records which keys a page resolved, so
-the Translatable strings tab knows what to offer. Swap it in from your own
-application:
+the Translatable strings tab knows what to offer. `TranslationLoader` swaps it
+in for Laravel's own — register it in `bootstrap/providers.php`, before
+anything that resolves a translation:
 
 ```php
-$this->app->extend('translator', fn ($translator, $app) => new \Wotz\FilamentAdminBar\Translator(
-    $translator->getLoader(),
-    $translator->getLocale(),
-));
+return [
+    // …
+    Wotz\FilamentAdminBar\TranslationLoader::class,
+];
 ```
 
 Keys are collected for the whole page view, including the lazy Livewire
