@@ -49,10 +49,11 @@ return [
     'corner' => 'left',
 
     /*
-     * How many pixels above the bottom edge the bar sits, closed and open.
-     * Zero, because that edge is where it belongs — raise it on a site that
-     * already pins something full-width down there and would otherwise be
-     * covered. Laravel Debugbar's minimised strip is the usual one, at 33.
+     * A floor, in pixels, for how far above the bottom edge the bar sits.
+     *
+     * Usually nothing: the bar measures that edge itself and climbs over
+     * whatever it finds pinned there, re-measuring when it changes. Set this
+     * only for something measurement cannot see.
      */
     'offset_bottom' => 0,
 

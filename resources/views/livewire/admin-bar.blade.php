@@ -15,11 +15,15 @@
     class="filament-admin-bar"
     x-bind:class="palette"
     data-corner="{{ $corner }}"
-    style="--ab-offset-block-end: {{ $offset }}px"
+    x-bind:style="`--ab-offset-block-end: ${offset}px`"
+    x-bind:data-raised="offset > 0 ? 'true' : null"
     popover="manual"
     x-data="{
         open: false,
         palette: null,
+        offset: @js($offset),
+        minimumOffset: @js($offset),
+        remeasuring: false,
         listenForResize: false,
         adminBarHeight: '400px',
         palettes: @js($palettes),
@@ -80,6 +84,88 @@
 
             return @js($fallbackPalette)
         },
+        /*
+         * How much of the bottom edge is already taken.
+         *
+         * The bar pins itself to that edge and so does everything else that
+         * wants to be permanent — a dev toolbar, a cookie strip, a sticky
+         * basket. A number in config cannot answer this: Laravel Debugbar
+         * alone is a full-width strip in one state and a small corner button
+         * in another, and it switches between them while the page is open.
+         *
+         * Only things that would actually be covered count: fixed to the
+         * bottom edge, short enough to be chrome rather than an overlay, and
+         * horizontally in the way of where the bar's own trigger sits.
+         */
+        measureBottomEdge () {
+            const trigger = this.$el.querySelector('[data-admin-bar-trigger]')
+            const box = trigger?.getBoundingClientRect()
+
+            /*
+             * The trigger is only laid out while the bar is closed. Open, the
+             * sheet spans the whole width, so everything on that edge is in
+             * the way.
+             */
+            const mine = box?.width
+                ? { left: box.left, right: box.right }
+                : { left: 0, right: window.innerWidth }
+
+            let taken = this.minimumOffset
+
+            for (const element of document.body.children) {
+                if (element === this.$el || this.$el.contains(element)) continue
+
+                const styles = window.getComputedStyle(element)
+
+                if (styles.position !== 'fixed') continue
+                if (styles.display === 'none' || styles.visibility === 'hidden') continue
+
+                const theirs = element.getBoundingClientRect()
+
+                if (theirs.width === 0 || theirs.height === 0) continue
+
+                // Sitting on the bottom edge, rather than merely somewhere low.
+                if (Math.abs(theirs.bottom - window.innerHeight) > 2) continue
+
+                // Past half the viewport it is a modal or a takeover rather
+                // than chrome along the edge, and climbing over it would put
+                // the bar in the middle of the screen.
+                if (theirs.height > window.innerHeight / 2) continue
+
+                // Off to one side, where the bar was never going anyway.
+                if (theirs.right < mine.left || theirs.left > mine.right) continue
+
+                taken = Math.max(taken, Math.round(theirs.height))
+            }
+
+            // Never so far up that the bar is floating in the page.
+            return Math.min(taken, Math.round(window.innerHeight / 2))
+        },
+        watchBottomEdge () {
+            const remeasure = () => {
+                if (this.remeasuring) return
+
+                this.remeasuring = true
+
+                window.requestAnimationFrame(() => {
+                    this.remeasuring = false
+                    this.offset = this.measureBottomEdge()
+                })
+            }
+
+            remeasure()
+
+            window.addEventListener('resize', remeasure)
+
+            // A toolbar folding itself away is an attribute change on an
+            // element the bar does not own, so there is nothing else to hear.
+            new MutationObserver(remeasure).observe(document.body, {
+                attributes: true,
+                childList: true,
+                subtree: false,
+                attributeFilter: ['class', 'style'],
+            })
+        },
         init () {
             this.palette = this.resolvePalette()
             this.open = window.localStorage.getItem('filament-admin-bar-open') === 'true'
@@ -98,6 +184,8 @@
                     // Already shown, or unsupported. The fallback stands.
                 }
             }
+
+            this.$nextTick(() => this.watchBottomEdge())
         }
     }"
 >

@@ -190,6 +190,17 @@
   cursor: pointer;
 }
 
+/*
+ * Flush against the edge the trigger reads as a tab pulled up out of it, which
+ * is why only its top corners are round. Lifted clear of something else it is
+ * a floating pill, and square bottom corners just look torn.
+ */
+.filament-admin-bar[data-raised='true'] [data-admin-bar-trigger] {
+  border-radius: var(--r-md);
+  padding-bottom: 8px;
+  margin-bottom: 6px;
+}
+
 .filament-admin-bar[data-corner='bottom-right'] [data-admin-bar-trigger] {
   left: auto;
   right: var(--ab-inset-inline-start);

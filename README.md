@@ -38,14 +38,14 @@ the Records tab.
 
 ## Sitting above something else
 
-The bar pins itself to the bottom edge, closed and open. A site that already
-has something full-width down there — a dev toolbar, a cookie strip, a sticky
-basket — raises it rather than being covered:
+The bar pins itself to the bottom edge, closed and open — and so does
+everything else that wants to be permanent: a dev toolbar, a cookie strip, a
+sticky basket. It measures that edge and climbs over whatever it finds there,
+re-measuring when it changes, so nothing needs configuring for the usual case.
+Laravel Debugbar is a full-width strip in one state and a corner button in
+another; both are handled.
 
-```php
-// config/filament-admin-bar.php
-'offset_bottom' => 33, // Laravel Debugbar's minimised strip
-```
+`offset_bottom` sets a floor, in pixels, for something measurement cannot see.
 
 ## Telling the bar which images a page draws
 
