@@ -40,11 +40,16 @@ class AdminBar extends Component
             return '';
         }
 
-        if (! $this->current) {
-            $this->current = session(
-                'filament-admin-bar.current',
-                $tabs->first(default: null)?->key()
-            );
+        $this->current ??= session('filament-admin-bar.current');
+
+        /*
+         * Which tab is open is remembered across pages, and not every page
+         * offers the same tabs — the Redirect tab only exists on a 404. Coming
+         * off one of those, the remembered tab is not here, and the bar opened
+         * on an empty body with nothing selected.
+         */
+        if (! $tabs->contains(fn (Tab $tab): bool => $tab->key() === $this->current)) {
+            $this->current = $tabs->first()->key();
         }
 
         return view('filament-admin-bar::livewire.admin-bar', [
