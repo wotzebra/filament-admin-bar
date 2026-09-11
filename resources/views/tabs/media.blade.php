@@ -10,6 +10,7 @@
                 <th style="width: 260px">Name</th>
                 <th>Alt text</th>
                 <th style="width: 120px">Size</th>
+                <th style="width: 90px"></th>
             </tr>
         </thead>
         <tbody>
@@ -37,6 +38,16 @@
                     </td>
                     <td style="color: var(--muted)">
                         {{ $attachment->width ? "{$attachment->width}×{$attachment->height}" : '—' }}
+                    </td>
+                    <td style="text-align: right">
+                        @if ($url = $editUrl($attachment))
+                            {{-- Where the alt text is written. Missing alt is the whole
+                                 point of this tab, so the fix is one click from it. --}}
+                            <a data-admin-bar-link href="{{ $url }}" target="_blank">
+                                <x-heroicon-o-arrow-top-right-on-square class="w-4 h-4" />
+                                Edit
+                            </a>
+                        @endif
                     </td>
                 </tr>
             @endforeach

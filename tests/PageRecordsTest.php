@@ -165,3 +165,27 @@ it('counts an image with no alt text in any locale as undescribed', function () 
     expect(PageMedia::lacksAltText($described))->toBeFalse()
         ->and(PageMedia::lacksAltText($bare))->toBeTrue();
 });
+
+it('stops collecting once the page has offered more than a tab can show', function () {
+    $records = app(PageRecords::class);
+
+    // A host wires registration to a model event, so an index page listing everything —
+    // or a feed, or a sitemap — hands over every row it touches.
+    foreach (range(1, PageRecords::LIMIT + 50) as $id) {
+        $records->register(new Thing(['id' => $id]));
+    }
+
+    expect($records->all())->toHaveCount(PageRecords::LIMIT);
+});
+
+it('always keeps the record the page is, however full it already is', function () {
+    $records = app(PageRecords::class);
+
+    foreach (range(1, PageRecords::LIMIT) as $id) {
+        $records->register(new Thing(['id' => $id]));
+    }
+
+    $records->register(new Thing(['id' => 9999]), primary: true);
+
+    expect($records->primary()?->getKey())->toBe(9999);
+});

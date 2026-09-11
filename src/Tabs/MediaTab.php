@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use Illuminate\View\View;
 use Wotz\FilamentAdminBar\Support\PageMedia;
+use Wotz\FilamentAdminBar\Support\PageRecords;
 
 /**
  * The images rendered on this page, with the one thing about them an editor
@@ -39,8 +40,13 @@ class MediaTab extends Tab
 
     public function render(): View
     {
+        $records = app(PageRecords::class);
+
         return view('filament-admin-bar::tabs.media', [
             'attachments' => $this->attachments(),
+            // Resolved per row rather than captured: it is a function of the model and
+            // the viewer's permissions, not of the page view that collected it.
+            'editUrl' => fn (Model $attachment): ?string => $records->editUrl($attachment),
         ]);
     }
 

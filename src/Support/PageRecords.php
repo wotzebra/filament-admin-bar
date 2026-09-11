@@ -35,9 +35,24 @@ class PageRecords
      * merely contains. A detail page's own item is primary; the index page it
      * lives under is not.
      */
+    /**
+     * At most this many. A host wires registration to a model event, so a page that
+     * lists everything — or a feed, or a sitemap — would otherwise hold every row it
+     * touched for a tab that shows twenty-five of them.
+     */
+    public const LIMIT = 200;
+
     public function register(?Model $record, bool $primary = false): void
     {
         if ($record === null || ! $record->exists) {
+            return;
+        }
+
+        /*
+         * Nothing to describe outside a page view, and a queued job walking a table
+         * would collect the lot.
+         */
+        if (app()->runningInConsole() && ! app()->runningUnitTests()) {
             return;
         }
 
@@ -45,6 +60,11 @@ class PageRecords
 
         // A record registered as primary stays primary.
         if ($this->records->has($key) && ! $primary) {
+            return;
+        }
+
+        // The page's own record always fits; the list it sits above is what gets capped.
+        if (! $primary && $this->records->count() >= self::LIMIT) {
             return;
         }
 
