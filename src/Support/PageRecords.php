@@ -3,6 +3,7 @@
 namespace Wotz\FilamentAdminBar\Support;
 
 use Filament\Facades\Filament;
+use Filament\Panel;
 use Filament\Resources\Resource;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
@@ -150,7 +151,7 @@ class PageRecords
 
         // The facade's docblock says `Panel`, but a non-strict lookup of a
         // panel that isn't registered returns null.
-        /** @var \Filament\Panel|null $panel */
+        /** @var Panel|null $panel */
         $panel = Filament::getPanel(static::panel(), isStrict: false);
 
         if ($panel === null) {
