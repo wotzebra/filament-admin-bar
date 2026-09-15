@@ -5,11 +5,43 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## Unreleased
+## v2.2.0 - 2026-09-15
 
 **The bar is the route from the live site back into the CMS, and it was only
 half of one.** Restyled to the Brigada theme, three bugs closed, three tabs
 added.
+
+### Upgrading
+
+An application on the default config and views only needs the first step.
+
+* **Re-publish the assets.** The stylesheet is new; without it the bar renders
+  unstyled.
+
+  ```bash
+  php artisan vendor:publish --force --tag=filament-admin-bar-assets
+  ```
+
+* **Published config: add the new tabs.** A published config keeps working —
+  every new key has a default — but it only lists the tabs it was published
+  with. Add `MediaTab::class`, `RecordsTab::class` and `RedirectsTab::class` to
+  `tabs` to get them, and consider widening `translatable-strings-tab.excluded`
+  from `filament-admin-bar::*` to `filament*::*`, the new default, so Filament's
+  own strings stay out of the tab. The new keys (`panel`, `corner`,
+  `inset_inline`, `default_palette`, `edit_page_url`, `redirects-tab.create-url`)
+  are in the package's config file.
+* **Published views: re-publish or delete them.** `admin-bar.blade.php` and
+  every tab view were rewritten, and the stylesheet targets the new markup. An
+  old published copy renders the old markup against the new styles.
+* **Custom tabs: read the page in `capture()`, not `render()`.** Only the active
+  tab renders now, and switching tabs renders it in a Livewire request, where
+  the page it sits on is gone. A tab that reads page state in `render()` shows
+  up empty after a switch. Read it in `capture()` — called once, on the page
+  view itself — store it with `$this->remember()`, and read it back in
+  `render()` with `$this->recall()`. `SeoTab` is the example.
+* **The `translatable-strings` session value changed shape**, from nested
+  key → value to a flat key → `true`. Only relevant to code outside the package
+  that read it.
 
 ### Fixed
 
@@ -68,7 +100,10 @@ added.
   publishes `--admin-bar-height` on the document so a host site can move its
   widget clear of the open sheet.
 * Closed state is a bottom-**left** edge tab, out of the corner those widgets
-  default to. New config: `corner`, `default_palette`, `edit_page_url`, `panel`.
+  default to. New config: `corner`, `inset_inline`, `default_palette`,
+  `edit_page_url`, `panel`, `redirects-tab.create-url`.
+
+**Full Changelog**: https://github.com/wotzebra/filament-admin-bar/compare/v2.1.2...v2.2.0
 
 ## v2.1.1 - 2026-04-27
 
