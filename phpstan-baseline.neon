@@ -1,8 +1,49 @@
 parameters:
-    ignoreErrors:
-        -
-            message: "#^Call to static method contents\\(\\) on an unknown class Wotz\\\\Seo\\\\Facades\\\\SeoBuilder\\.#"
-            path: src/Tabs/SeoTab.php
-        -
-            message: "#^Call to static method query\\(\\) on an unknown class Wotz\\\\TranslatableStrings\\\\Models\\\\TranslatableString\\.#"
-            path: src/Livewire/TranslatableStringsTab.php
+	ignoreErrors:
+		-
+			message: '#^Access to property \$id on an unknown class Wotz\\TranslatableStrings\\Models\\TranslatableString\.$#'
+			identifier: class.notFound
+			count: 1
+			path: src/Livewire/TranslatableStringsTab.php
+
+		-
+			message: '#^Access to property \$is_html on an unknown class Wotz\\TranslatableStrings\\Models\\TranslatableString\.$#'
+			identifier: class.notFound
+			count: 1
+			path: src/Livewire/TranslatableStringsTab.php
+
+		-
+			message: '#^Access to property \$value on an unknown class Wotz\\TranslatableStrings\\Models\\TranslatableString\.$#'
+			identifier: class.notFound
+			count: 1
+			path: src/Livewire/TranslatableStringsTab.php
+
+		-
+			message: '#^Call to method export\(\) on an unknown class Wotz\\TranslatableStrings\\ExportToLang\.$#'
+			identifier: class.notFound
+			count: 1
+			path: src/Livewire/TranslatableStringsTab.php
+
+		-
+			message: '#^Call to static method query\(\) on an unknown class Wotz\\TranslatableStrings\\Models\\TranslatableString\.$#'
+			identifier: class.notFound
+			count: 2
+			path: src/Livewire/TranslatableStringsTab.php
+
+		-
+			message: '#^Method Wotz\\FilamentAdminBar\\Livewire\\TranslatableStringsTab\:\:strings\(\) has invalid return type Wotz\\TranslatableStrings\\Models\\TranslatableString\.$#'
+			identifier: class.notFound
+			count: 1
+			path: src/Livewire/TranslatableStringsTab.php
+
+		-
+			message: '#^Parameter \$exporter of method Wotz\\FilamentAdminBar\\Livewire\\TranslatableStringsTab\:\:submit\(\) has invalid type Wotz\\TranslatableStrings\\ExportToLang\.$#'
+			identifier: class.notFound
+			count: 1
+			path: src/Livewire/TranslatableStringsTab.php
+
+		-
+			message: '#^Call to static method contents\(\) on an unknown class Wotz\\Seo\\Facades\\SeoBuilder\.$#'
+			identifier: class.notFound
+			count: 1
+			path: src/Tabs/SeoTab.php

@@ -148,6 +148,9 @@ class PageRecords
             return $map;
         }
 
+        // The facade's docblock says `Panel`, but a non-strict lookup of a
+        // panel that isn't registered returns null.
+        /** @var \Filament\Panel|null $panel */
         $panel = Filament::getPanel(static::panel(), isStrict: false);
 
         if ($panel === null) {
